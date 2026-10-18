@@ -2,7 +2,7 @@
 
 An AI powered IT support assistant for everyday technology users. The goal is to make technical troubleshooting, programming help, and learning easier through a simple chat experience.
 
-> **Project status:** Planning. This repository currently contains the project README; the application has not been implemented yet.
+> **Project status:** Backend foundation in progress. The first API milestone targets Windows troubleshooting and uses reviewed guides as its source of truth.
 
 ## Vision
 
@@ -58,12 +58,38 @@ Development prerequisites will be finalized when implementation begins. The plan
 
 Keep API keys in local environment variables or a local `.env` file that is excluded from version control. Never commit secrets to the repository. A future `.env.example` should document required variable names without containing real credentials.
 
+## Backend API (initial Windows prototype)
+
+The Python API lives in `backend/` and uses FastAPI. It currently provides:
+
+- `GET /health` — liveness check.
+- `GET /api/v1/guides/search?q=...` — full-text searches the bundled SQLite guide index.
+- `GET /api/v1/guides/{guide_id}` — returns a guide with steps, cautions, tags, and references.
+- `POST /api/v1/chat` — sends a question and optional prior turns to the OpenAI Responses API with matching guide context.
+- `GET /docs` — interactive local API documentation.
+
+The included Windows guides are drafts and are hidden from search and chat by default. Review and approve records before serving them. For local retrieval development only, `SERVE_DRAFT_GUIDES=true` can expose the draft entries. Chat requires a server-side OpenAI API key. Web search is off by default; when enabled by the client, it is constrained to Microsoft Support and Microsoft Learn, and the UI must display returned citations. The API does not inspect or control the user's device and does not persist conversation history.
+
+### Run locally
+
+```powershell
+cd backend
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
+# Add your OpenAI API key to .env; never commit the real key.
+uvicorn app.main:app --reload
+```
+
+Configuration is read from environment variables; see `backend/.env.example`. Do not put real credentials in source control. The guide database, rebuild script, and example SQL queries are under `backend/data/`.
+
 ## Development roadmap
 
 1. Define the first user journeys and the assistant's safety boundaries.
 2. Create the React chat interface with a prompt box and response display.
-3. Build the Python API endpoint that accepts a prompt and returns a model response.
-4. Add one model provider, configuration, and clear error handling.
+3. Review and approve the Windows troubleshooting guides.
+4. Add a React chat interface that calls the API and presents source citations.
 5. Decide whether conversation persistence is needed and select a storage option.
 6. Add testing, privacy and security review, and deployment planning.
 7. Consider optional hardware or operating system context only after the user experience and consent model are defined.
