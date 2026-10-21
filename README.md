@@ -48,7 +48,7 @@ The frontend should communicate with the backend API. The backend should keep mo
 
 ## Prerequisites
 
-Development prerequisites will be finalized when implementation begins. The planned stack suggests:
+The initial web prototype uses Node.js 20.19+ (or 22.12+) and pnpm for the React/Vite frontend, plus Python for the API.
 
 - Git for source control
 - Node.js and npm for the React frontend
@@ -83,6 +83,21 @@ uvicorn app.main:app --reload
 ```
 
 Configuration is read from environment variables; see `backend/.env.example`. Do not put real credentials in source control. The guide database, rebuild script, and example SQL queries are under `backend/data/`.
+
+## Frontend preview
+
+The React/Vite preview is in `frontend/`. It includes a chat composer, sample prompts, optional Microsoft-only web search, source links, and a guide-search panel. Chat text is sent to OpenAI by the backend; the UI discloses this, and web search is an additional opt-in. The interface cannot inspect or change the PC.
+
+Run the frontend in a second PowerShell window:
+
+```powershell
+cd frontend
+pnpm install
+Copy-Item .env.example .env
+pnpm dev
+```
+
+Open `http://127.0.0.1:5173`. The backend must be running on `http://127.0.0.1:8000`. Since all 16 included guides are drafts, search and chat will return no guide matches by default. For local development only, set `SERVE_DRAFT_GUIDES=true` in `backend/.env` to try retrieval with them; review and approve guides before enabling them in any public deployment.
 
 ## Development roadmap
 
