@@ -68,7 +68,7 @@ The Python API lives in `backend/` and uses FastAPI. It currently provides:
 - `POST /api/v1/chat` — sends a question and optional prior turns to the OpenAI Responses API with matching guide context.
 - `GET /docs` — interactive local API documentation.
 
-The included Windows guides are drafts and are hidden from search and chat by default. Review and approve records before serving them. For local retrieval development only, `SERVE_DRAFT_GUIDES=true` can expose the draft entries. Chat requires a server-side OpenAI API key. Web search is off by default; when enabled by the client, it is constrained to Microsoft Support and Microsoft Learn, and the UI must display returned citations. The API does not inspect or control the user's device and does not persist conversation history.
+The bundled SQLite database contains no guide records. Search and chat therefore have no guide content to retrieve until reviewed records are added. The API does not include draft guide content. Chat requires a server-side OpenAI API key. Web search is off by default; when enabled by the client, it is constrained to Microsoft Support and Microsoft Learn, and the UI must display returned citations. The API does not inspect or control the user's device and does not persist conversation history.
 
 ### Run locally
 
@@ -97,13 +97,13 @@ Copy-Item .env.example .env
 pnpm dev
 ```
 
-Open `http://127.0.0.1:5173`. The backend must be running on `http://127.0.0.1:8000`. Since all 16 included guides are drafts, search and chat will return no guide matches by default. For local development only, set `SERVE_DRAFT_GUIDES=true` in `backend/.env` to try retrieval with them; review and approve guides before enabling them in any public deployment.
+Open `http://127.0.0.1:5173`. The backend must be running on `http://127.0.0.1:8000`. The bundled SQLite database currently has no guide records, so search and chat return no guide matches. Add reviewed guide content before enabling retrieval.
 
 ## Development roadmap
 
 1. Define the first user journeys and the assistant's safety boundaries.
 2. Create the React chat interface with a prompt box and response display.
-3. Review and approve the Windows troubleshooting guides.
+3. Add and review Windows troubleshooting guide records.
 4. Add a React chat interface that calls the API and presents source citations.
 5. Decide whether conversation persistence is needed and select a storage option.
 6. Add testing, privacy and security review, and deployment planning.
